@@ -7,7 +7,7 @@ using Kicherkoje.Automations.Apps.Shared;
 namespace Kicherkoje.Automations.Apps.General;
 
 [NetDaemonApp(Id = "GeneralLights")]
-public class GeneralLights : BaseApp
+public class GeneralLights : AppBase
 {
     private readonly List<LightEntity> _allLights;
 

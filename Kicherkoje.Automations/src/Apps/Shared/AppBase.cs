@@ -2,7 +2,7 @@ using System.Reactive.Concurrency;
 
 namespace Kicherkoje.Automations.Apps.Shared;
 
-public class BaseApp
+public class AppBase
 {
     internal readonly Entities Entities;
     internal readonly ILogger Logger;
@@ -10,7 +10,7 @@ public class BaseApp
     internal readonly IServices Services;
     internal readonly IHaContext HaContext;
 
-    protected BaseApp(
+    protected AppBase(
         IHaContext haContext, 
         ILogger logger, 
         IScheduler scheduler)
