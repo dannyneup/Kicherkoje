@@ -26,15 +26,4 @@ public class GeneralLights : AppBase
                     .ForEach(e => e.TurnOff())
                 );
     }
-    
-    private void OnLastPersonLeaves_TurnOffLights()
-    {
-        Entities.Sun.Sun.StateChanges()
-            .Where(c => c.New?.State == "above_horizon")
-            .Subscribe(x => 
-                _allLights.Where(l => l != Entities.Light.HallGrowLamp)
-                    .ToList()
-                    .ForEach(e => e.TurnOff())
-            );
-    }
 }
