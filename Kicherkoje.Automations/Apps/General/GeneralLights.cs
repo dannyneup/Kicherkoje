@@ -11,19 +11,18 @@ public class GeneralLights : AppBase
 {
     private readonly List<LightEntity> _allLights;
 
-    public GeneralLights(IHaContext haContext, ILogger<GeneralLights> logger, IScheduler scheduler) : base(haContext, logger, scheduler)
-    {
+    public GeneralLights(IHaContext haContext, IEntities entities, IServices services, ILogger<GeneralLights> logger,
+        IScheduler scheduler) : base(haContext, entities, services, logger, scheduler) =>
         _allLights = Entities.Light.EnumerateAll().ToList();
-    }
 
     private void OnSunRise_TurnOffLights()
     {
         Entities.Sun.Sun.StateChanges()
             .Where(c => c.New?.State == "above_horizon")
-            .Subscribe(x => 
+            .Subscribe(x =>
                 _allLights.Where(l => l != Entities.Light.HallGrowLamp)
                     .ToList()
                     .ForEach(e => e.TurnOff())
-                );
+            );
     }
 }

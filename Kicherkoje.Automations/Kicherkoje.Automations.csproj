@@ -50,8 +50,4 @@
     <ItemGroup>
       <EmbeddedResource Remove="NetDaemonCodegen\**" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="src\Apps\Rooms\" />
-    </ItemGroup>
 </Project>

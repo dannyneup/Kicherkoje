@@ -8,9 +8,9 @@ namespace Kicherkoje.Automations.Apps.Rooms.LivingRoom;
 [NetDaemonApp(Id = "LivingRoomTvLights")]
 public class LivingRoomTvLights : AppBase
 {
-    public LivingRoomTvLights(IHaContext haContext, ILogger<LivingRoomTvLights> logger, IScheduler scheduler) : base(
-        haContext, logger,
-        scheduler)
+    public LivingRoomTvLights(IHaContext haContext, IEntities entities, IServices services,
+        ILogger<LivingRoomTvLights> logger, IScheduler scheduler) : base(
+        haContext, entities, services, logger, scheduler)
     {
         OnSyncBoxDeviceLinked_TriggerLightSync();
     }
@@ -18,7 +18,7 @@ public class LivingRoomTvLights : AppBase
     private void OnSyncBoxDeviceLinked_TriggerLightSync()
     {
         var appleTvStatusEntity = Entities.Sensor.SyncBoxHdmi1Status;
-        
+
         var syncModes = new Dictionary<SensorEntity, HuesyncboxSetSyncStateParameters>
         {
             {
@@ -34,7 +34,7 @@ public class LivingRoomTvLights : AppBase
         };
 
         var deviceId = "5780afbe2e84afb8bf2403cae6e16599";
-        
-        Services.Huesyncbox.SetSyncState(new ServiceTarget{DeviceIds = [deviceId]});
+
+        Services.Huesyncbox.SetSyncState(new ServiceTarget { DeviceIds = [deviceId] });
     }
 }

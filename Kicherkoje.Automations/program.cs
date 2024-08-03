@@ -1,5 +1,4 @@
 using System.Reflection;
-using Kicherkoje.Automations.HomeAssistantGenerated;
 using Microsoft.Extensions.Hosting;
 using NetDaemon.Extensions.Logging;
 using NetDaemon.Extensions.Scheduler;
