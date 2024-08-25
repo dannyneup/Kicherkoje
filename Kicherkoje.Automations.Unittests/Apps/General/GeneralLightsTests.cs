@@ -25,10 +25,26 @@ public sealed class GeneralLightsTests
     {
         InitGeneralLights();
         
-        _haContext.TriggerStateChange(_entities.Light.HallGrowLamp, LightService.TurnOn.GetHaStringRepresentation());
+        _haContext.TriggerStateChange(_entities.Sun.Sun, SunState.AboveHorizon.GetHaStringRepresentation());
+
+        var lightEntities = _entities.Light.EnumerateAll();
         
+        foreach (var entity in lightEntities)
+        {
+            if (entity == _entities.Light.HallGrowLamp)
+                continue;
+            _haContext.VerifyServiceCalled(entity, typeof(LightService).GetHaStringRepresentation(), LightService.TurnOff.GetHaStringRepresentation());
+        }
+    }
+    
+    [Fact]
+    public void OnSunRise_TurnOffLights_TurnOffHueSigne()
+    {
+        InitGeneralLights();
+        
+        _haContext.TriggerStateChange(_entities.Sun.Sun, SunState.AboveHorizon.GetHaStringRepresentation());
+
         _haContext.VerifyServiceCalled(_entities.Light.SigneGradientTable1, typeof(LightService).GetHaStringRepresentation(), LightService.TurnOff.GetHaStringRepresentation());
-        
     }
 
     private GeneralLights InitGeneralLights()

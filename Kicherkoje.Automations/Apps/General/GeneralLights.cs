@@ -20,11 +20,12 @@ public class GeneralLights
 
     private void OnSunRise_TurnOffLights()
     {
-        _entities.Light.HallGrowLamp
-            .StateChanges()
+        _entities.Sun.Sun.StateChanges()
+            .Where(c => c.New?.State == SunState.AboveHorizon.GetHaStringRepresentation())
             .Subscribe(x =>
-            {
-                _entities.Light.SigneGradientTable1.TurnOff();
-            });
+                _entities.Light.EnumerateAll().Where(l => l != _entities.Light.HallGrowLamp)
+                    .ToList()
+                    .ForEach(e => e.TurnOff())
+            );
     }
 }
