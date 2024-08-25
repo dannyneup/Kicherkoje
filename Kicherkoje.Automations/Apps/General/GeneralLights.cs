@@ -3,26 +3,28 @@ using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Kicherkoje.Automations.Apps.Shared;
+using Kicherkoje.Automations.Helpers.Enums.States;
+using Kicherkoje.Automations.Helpers.Extensions;
 
 namespace Kicherkoje.Automations.Apps.General;
 
 [NetDaemonApp(Id = "GeneralLights")]
-public class GeneralLights : AppBase
+public class GeneralLights
 {
-    private readonly List<LightEntity> _allLights;
+    private readonly IEntities _entities;
 
-    public GeneralLights(IHaContext haContext, IEntities entities, IServices services, ILogger<GeneralLights> logger,
-        IScheduler scheduler) : base(haContext, entities, services, logger, scheduler) =>
-        _allLights = Entities.Light.EnumerateAll().ToList();
+    public GeneralLights(IEntities entities)
+    {
+        _entities = entities;
+    }
 
     private void OnSunRise_TurnOffLights()
     {
-        Entities.Sun.Sun.StateChanges()
-            .Where(c => c.New?.State == "above_horizon")
+        _entities.Light.HallGrowLamp
+            .StateChanges()
             .Subscribe(x =>
-                _allLights.Where(l => l != Entities.Light.HallGrowLamp)
-                    .ToList()
-                    .ForEach(e => e.TurnOff())
-            );
+            {
+                _entities.Light.SigneGradientTable1.TurnOff();
+            });
     }
 }
