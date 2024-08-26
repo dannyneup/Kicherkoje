@@ -12,17 +12,16 @@ public class AppBase
 
     protected AppBase(
         IHaContext haContext, 
-        IEntities entities,
-        IServices services,
         ILogger logger, 
         IScheduler scheduler)
     {
         HaContext = haContext;
         Logger = logger;
         Scheduler = scheduler;
-        Entities = entities;
-        Services = services;
-
+        Entities = new Entities(HaContext);
+        Services = new Services(HaContext);
+        
+        
         Logger.LogDebug("Started {Name}", GetType().Name);
     }
 }

@@ -50,4 +50,8 @@
     <ItemGroup>
       <EmbeddedResource Remove="NetDaemonCodegen\**" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Configuration\HomeAssistantGenerated\" />
+    </ItemGroup>
 </Project>

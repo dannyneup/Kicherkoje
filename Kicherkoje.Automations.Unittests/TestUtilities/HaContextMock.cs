@@ -1,37 +1,25 @@
-using System.Reactive.Subjects;
-using System.Text.Json;
 using NetDaemon.HassModel.Entities;
 using NSubstitute;
 
-namespace Kicherkoje.Automations.Unittests.TestUtilities
+namespace Kicherkoje.Automations.Unittests.TestUtilities;
+
+public class HaContextMock : HaContextMockBase
 {
-    public class HaContextMock : IHaContext
-    {
-        public Dictionary<string, EntityState> EntityStates { get; } = new();
-        public Subject<StateChange> StateAllChangeSubject { get; } = new();
-        public Subject<Event> EventsSubject { get; } = new();
+    public IHaContext Mock { get; } = Substitute.For<IHaContext>();
 
-        public IObservable<StateChange> StateAllChanges() => StateAllChangeSubject;
+    public override void CallService(string domain, string service, ServiceTarget? target = null, object? data = null) => 
+        Mock.CallService(domain, service, target, data);
 
-        public EntityState? GetState(string entityId) => EntityStates.TryGetValue(entityId, out var result) ? result : null;
+    public override void SendEvent(string eventType, object? data = null) => 
+        Mock.SendEvent(eventType, data);
 
-        public IReadOnlyList<Entity> GetAllEntities() => EntityStates.Keys.Select(s => new Entity(this, s)).ToList();
-
-        public virtual void CallService(string domain, string service, ServiceTarget? target = null, object? data = null)
-        { }
-
-        public Area? GetAreaFromEntityId(string entityId) => null;
-        
-        public EntityRegistration? GetEntityRegistration(string entityId) => throw new NotImplementedException();
-
-        public virtual void SendEvent(string eventType, object? data = null)
-        { }
-
-        public Task<JsonElement?> CallServiceWithResponseAsync(string domain, string service, ServiceTarget? target = null, object? data = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IObservable<Event> Events => EventsSubject;
-    }
+    public override void VerifyServiceCalled(Entity entity, string domain, string service, int count = 1) =>
+        Mock
+            .Received(count)
+            .CallService(
+                domain,
+                service,
+                Arg.Is<ServiceTarget>(n => n.EntityIds!.Contains(entity.EntityId)),
+                Arg.Any<object?>()
+            );
 }

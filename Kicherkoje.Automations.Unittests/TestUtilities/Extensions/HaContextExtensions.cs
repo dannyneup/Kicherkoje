@@ -1,37 +1,41 @@
+using System.Reflection;
+using Kicherkoje.Automations.Configuration.HomeAssistantGenerated;
 using NetDaemon.HassModel.Entities;
-using NSubstitute;
 
 namespace Kicherkoje.Automations.Unittests.TestUtilities.Extensions;
 
 public static class HaContextExtensions
 {
-    public static void TriggerStateChange(this HaContextMock context, Entity entity, string newStateValue, object? attributes = null)
+    public static IEnumerable<Entity> LoadGeneratedEntities(this IHaContext context)
     {
-        var newState = new EntityState { State = newStateValue };
-        if (attributes != null)
+        var entities = new Entities(context);
+        
+        var properties = entities.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+        // Create a list to hold all entities
+        var allEntities = new List<Entity>();
+
+        foreach (var property in properties)
         {
-            newState = newState with { AttributesJson = attributes.AsJsonElement() };
+            // Get the value of the property which should be a domain class (e.g., Lights, Sensors)
+            var domain = property.GetValue(entities);
+
+            if (domain == null)
+                continue;
+
+            // Get all properties from the domain class (e.g., all lights)
+            var domainProperties = domain.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (var domainProperty in domainProperties)
+            {
+                // Each domain property should be an Entity
+                if (domainProperty.GetValue(domain) is Entity entity)
+                {
+                    allEntities.Add(entity);
+                }
+            }
         }
 
-        context.TriggerStateChange(entity.EntityId, newState);
-    }
-
-    public static void TriggerStateChange(this HaContextMock context, string entityId, EntityState newState)
-    {
-        var oldState = context.EntityStates.TryGetValue(entityId, out var current) ? current : null;
-        context.EntityStates[entityId] = newState;
-        context.StateAllChangeSubject.OnNext(new StateChange(new Entity(context, entityId), oldState, newState));
-    }
-
-    public static void VerifyServiceCalled(this HaContextMock context, Entity entity, string domain, string service)
-    {
-        context.Received().CallService(domain, service,
-            Arg.Is<ServiceTarget?>(s => s!.EntityIds!.SingleOrDefault() == entity.EntityId),
-            Arg.Any<object>());
-    }
-
-    public static void TriggerEvent(this HaContextMock context, Event @event)
-    {
-        context.EventsSubject.OnNext(@event);
+        return allEntities.AsEnumerable();
     }
 }

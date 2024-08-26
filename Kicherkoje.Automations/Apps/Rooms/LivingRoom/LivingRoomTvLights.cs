@@ -8,9 +8,8 @@ namespace Kicherkoje.Automations.Apps.Rooms.LivingRoom;
 [NetDaemonApp(Id = "LivingRoomTvLights")]
 public class LivingRoomTvLights : AppBase
 {
-    public LivingRoomTvLights(IHaContext haContext, IEntities entities, IServices services,
-        ILogger<LivingRoomTvLights> logger, IScheduler scheduler) : base(
-        haContext, entities, services, logger, scheduler)
+    public LivingRoomTvLights(IHaContext haContext, ILogger<LivingRoomTvLights> logger, IScheduler scheduler) : base(
+        haContext, logger, scheduler)
     {
         OnSyncBoxDeviceLinked_TriggerLightSync();
     }

@@ -1,4 +1,4 @@
-global using Kicherkoje.Automations.HomeAssistantGenerated;
+global using Kicherkoje.Automations.Configuration.HomeAssistantGenerated;
 global using Microsoft.Extensions.Logging;
 global using NetDaemon.AppModel;
 global using NetDaemon.HassModel;

@@ -10,17 +10,16 @@ using Project = Nuke.Common.ProjectModel.Project;
 
 class Build : NukeBuild
 {
-    [Solution(GenerateProjects = true)] 
-    readonly Solution Solution;
-    Project TargetProject => Solution.Kicherkoje_Automations;
-
-    AbsolutePath AppSettingsPath => TargetProject.Directory / "appsettings.json";
-    IConfiguration Configuration;
-
-
     const string HomeAssistantSshHost = "homeassistant";
     const string NetDaemonAddonContainerId = "c6a2317c_netdaemon4";
     const string HostsNetDaemonDirectory = "/config/netdaemon4";
+
+    [Solution(GenerateProjects = true)] readonly Solution Solution;
+
+    IConfiguration Configuration;
+    Project TargetProject => Solution.Kicherkoje_Automations;
+
+    AbsolutePath AppSettingsPath => TargetProject.Directory / "appsettings.json";
 
     AbsolutePath PublishDirectory => TargetProject.Directory / "bin" / "Publish";
 
@@ -31,17 +30,17 @@ class Build : NukeBuild
                 .AddJsonFile(AppSettingsPath)
                 .Build();
         });
-    
+
     Target Clean => d => d
         .Executes(() => DotNetClean(s => s.SetProject(TargetProject)));
 
     Target Restore => d => d
         .DependsOn(Clean)
         .Executes(() => DotNetRestore(s => s.SetProjectFile(TargetProject)));
-    
+
     Target RestoreTools => d => d
         .Executes(() => DotNetToolRestore());
-    
+
     Target RunCodeGenerator => d => d
         .DependsOn(RestoreTools, Initialize)
         .Executes(() =>
@@ -49,11 +48,13 @@ class Build : NukeBuild
             var host = Configuration["HomeAssistant:Host"];
             var port = Configuration["HomeAssistant:Port"];
             var token = Configuration["HomeAssistant:Token"];
-            var haGeneratedNamespace = $"{TargetProject.Name}.HomeAssistantGenerated";
-            var metaDataFolder = TargetProject.Directory / "NetDaemonCodegen";
-            var outputPath = TargetProject.Directory / "src" / "HomeAssistantGenerated.cs";
-            
-            return Pwsh($@"-Command dotnet nd-codegen -o {outputPath} -f {metaDataFolder} -ns {haGeneratedNamespace} -host {host} -port {port} -token {token}");
+            var haGeneratedNamespace = $"{TargetProject.Name}.Configuration.HomeAssistantGenerated";
+            var outputFolder = TargetProject.Directory / "Configuration" / "HomeAssistantGenerated";
+            var metaDataOutputFolder = outputFolder / "Metadata";
+            var outputFile = outputFolder / "HomeAssistantGenerated.cs";
+
+            return Pwsh(
+                $@"-Command dotnet nd-codegen -o {outputFile} -f {metaDataOutputFolder} -ns {haGeneratedNamespace} -host {host} -port {port} -token {token}");
         });
 
     Target DotnetBuild => d => d
@@ -94,10 +95,10 @@ class Build : NukeBuild
         .DependsOn(CheckNetDaemonVersion, Publish)
         .Executes(() =>
             Pwsh(
-            $"""
-                -Command
-                rsync -a --delete {PublishDirectory}/. {HomeAssistantSshHost}:{HostsNetDaemonDirectory}
-            """
+                $"""
+                     -Command
+                     rsync -a --delete {PublishDirectory}/. {HomeAssistantSshHost}:{HostsNetDaemonDirectory}
+                 """
             )
         );
 
