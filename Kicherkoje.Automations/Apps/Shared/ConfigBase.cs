@@ -4,11 +4,11 @@ public class ConfigBase
 {
     public ConfigBase()
     {
-        if (HaContext != null) 
+        if (HaContext != null)
             Entities = new Entities(HaContext);
     }
-    
+
     public IHaContext HaContext { get; init; }
-    
+
     protected Entities Entities { get; }
 }

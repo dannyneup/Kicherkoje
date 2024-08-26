@@ -38,7 +38,7 @@ public sealed class GeneralLightsTests
                 LightService.TurnOff.GetHaStringRepresentation());
         }
     }
-    
+
     [Fact]
     public void OnSunRise_TurnOffLights_DoesNotTurnOffGrowLights()
     {
@@ -47,13 +47,9 @@ public sealed class GeneralLightsTests
         _haContext.TriggerStateChange(_entities.Sun.Sun, SunState.AboveHorizon.GetHaStringRepresentation());
 
         foreach (var lightEntity in _entities.Light.EnumerateAll())
-        {
             if (config.Value.GrowLights.Contains(lightEntity))
-            {
                 _haContext.VerifyServiceCalled(lightEntity, typeof(LightService).GetHaStringRepresentation(),
                     Arg.Any<string>(), 0);
-            }
-        }
     }
 
     private (GeneralLights app, IAppConfig<GeneralLightsConfig> config) InitGeneralLights(

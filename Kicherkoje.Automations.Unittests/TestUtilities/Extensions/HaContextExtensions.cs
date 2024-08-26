@@ -9,7 +9,7 @@ public static class HaContextExtensions
     public static IEnumerable<Entity> LoadGeneratedEntities(this IHaContext context)
     {
         var entities = new Entities(context);
-        
+
         var properties = entities.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
         // Create a list to hold all entities
@@ -27,13 +27,9 @@ public static class HaContextExtensions
             var domainProperties = domain.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
             foreach (var domainProperty in domainProperties)
-            {
                 // Each domain property should be an Entity
                 if (domainProperty.GetValue(domain) is Entity entity)
-                {
                     allEntities.Add(entity);
-                }
-            }
         }
 
         return allEntities.AsEnumerable();

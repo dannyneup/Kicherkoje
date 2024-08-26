@@ -6,8 +6,6 @@ namespace Kicherkoje.Automations.Helpers.Enums.Services;
 [HaStringRepresentation("light")]
 public enum LightService
 {
-    [HaStringRepresentation("turn_on")]
-    TurnOn,
-    [HaStringRepresentation("turn_off")]
-    TurnOff,
+    [HaStringRepresentation("turn_on")] TurnOn,
+    [HaStringRepresentation("turn_off")] TurnOff
 }

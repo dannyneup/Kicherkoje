@@ -1,9 +1,5 @@
 using System.Reflection;
-using Kicherkoje.Automations.Apps.General;
-using Kicherkoje.Automations.Apps.Shared;
 using Kicherkoje.Automations.Configuration;
-using Kicherkoje.Automations.Configuration.HomeAssistantGenerated;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NetDaemon.Extensions.Logging;
 using NetDaemon.Extensions.MqttEntityManager;

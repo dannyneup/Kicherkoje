@@ -22,14 +22,14 @@ public class HaEntityStateTests
                 })
                 .Where(x => x.Attribute == null || string.IsNullOrWhiteSpace(x.Attribute.State))
                 .ToList();
-            
-            
-            Assert.False(fieldsWithoutStringRepresentation.Count != 0, 
+
+
+            Assert.False(fieldsWithoutStringRepresentation.Count != 0,
                 $"The following fields in enum type '{enumType.Name}' have no valid string representation: " +
                 $"{string.Join(", ", fieldsWithoutStringRepresentation.Select(x => x.Field.Name))}");
         }
     }
-    
+
     private static IEnumerable<Type> GetAllHaEntityStateEnums()
     {
         var types = Assembly.GetExecutingAssembly()

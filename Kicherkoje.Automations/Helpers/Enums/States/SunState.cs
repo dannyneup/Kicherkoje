@@ -7,6 +7,7 @@ public enum SunState
 {
     [HaStringRepresentation("below_horizon")]
     BelowHorizon,
+
     [HaStringRepresentation("above_horizon")]
     AboveHorizon
 }

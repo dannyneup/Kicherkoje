@@ -5,7 +5,6 @@ using System.Reactive.Linq;
 using Kicherkoje.Automations.Apps.Shared;
 using Kicherkoje.Automations.Helpers.Enums.States;
 using Kicherkoje.Automations.Helpers.Extensions;
-using NetDaemon.HassModel.Entities;
 
 namespace Kicherkoje.Automations.Apps.General;
 
@@ -15,10 +14,11 @@ public class GeneralLights : AppBase
     private readonly IAppConfig<GeneralLightsConfig> _config;
 
 
-    public GeneralLights(IHaContext context, ILogger<GeneralLights> logger, IScheduler scheduler, IAppConfig<GeneralLightsConfig> config) : base(context, logger, scheduler)
+    public GeneralLights(IHaContext context, ILogger<GeneralLights> logger, IScheduler scheduler,
+        IAppConfig<GeneralLightsConfig> config) : base(context, logger, scheduler)
     {
         _config = config;
-        
+
         OnSunRise_TurnOffLights();
     }
 
@@ -35,27 +35,21 @@ public class GeneralLights : AppBase
                             continue;
                         lightEntity.TurnOff();
                     }
-                } 
+                }
             );
     }
 }
 
-
 public class GeneralLightsConfig : ConfigBase
 {
-    public GeneralLightsConfig()
-    {
-        GrowLights = [
+    public GeneralLightsConfig() =>
+        GrowLights =
+        [
             Entities.Light.LivingRoomPlantRackLight,
             Entities.Light.HallGrowLamp
         ];
-    }
 
-    public GeneralLightsConfig(IEnumerable<LightEntity> growLights)
-    {
-        GrowLights = growLights.ToList();
-    }
-    
+    public GeneralLightsConfig(IEnumerable<LightEntity> growLights) => GrowLights = growLights.ToList();
+
     public IReadOnlyList<LightEntity> GrowLights { get; }
-    
 }
