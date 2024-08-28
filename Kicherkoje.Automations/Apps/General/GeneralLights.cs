@@ -20,6 +20,7 @@ public class GeneralLights : AppBase
         _config = config;
 
         OnSunRise_TurnOffLights();
+        OnGrowLightsTurnOn_ScheduleTurnOff();
     }
 
 
@@ -36,6 +37,19 @@ public class GeneralLights : AppBase
                         lightEntity.TurnOff();
                     }
                 }
+            );
+    }
+
+    private void OnGrowLightsTurnOn_ScheduleTurnOff()
+    {
+        Entities.Light.Growlights
+            .StateChanges()
+            .Where(s => s.New?.State == LightState.On.GetHaStringRepresentation())
+            .Subscribe(_ =>
+                Scheduler.Schedule(
+                    new TimeSpan(12, 0, 0), () =>
+                        Entities.Light.Growlights.TurnOff()
+                )
             );
     }
 }

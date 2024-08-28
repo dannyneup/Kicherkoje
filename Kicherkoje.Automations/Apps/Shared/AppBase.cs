@@ -2,7 +2,7 @@ using System.Reactive.Concurrency;
 
 namespace Kicherkoje.Automations.Apps.Shared;
 
-public class AppBase
+public abstract class AppBase
 {
     internal readonly IEntities Entities;
     internal readonly IHaContext HaContext;
