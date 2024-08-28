@@ -8,7 +8,7 @@ public class ConfigBase
             Entities = new Entities(HaContext);
     }
 
-    public IHaContext HaContext { get; init; }
+    public IHaContext? HaContext { get; init; }
 
-    protected Entities Entities { get; }
+    protected Entities? Entities { get; }
 }

@@ -61,13 +61,13 @@ class Build : NukeBuild
         .DependsOn(Restore, RunCodeGenerator)
         .Executes(() => DotNetBuild(s =>
             s.SetProjectFile(TargetProject)
-                .SetConfiguration("Release")));
+                .SetConfiguration(global::Configuration.Release)));
 
     Target Publish => d => d
         .DependsOn(DotnetBuild)
         .Executes(() => DotNetPublish(s =>
             s.SetProject(TargetProject)
-                .SetConfiguration("Release")
+                .SetConfiguration(global::Configuration.Release)
                 .SetOutput(PublishDirectory)));
 
     Target CheckNetDaemonVersion => d => d
