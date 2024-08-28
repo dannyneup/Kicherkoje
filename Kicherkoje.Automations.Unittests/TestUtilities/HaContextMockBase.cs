@@ -7,9 +7,9 @@ namespace Kicherkoje.Automations.Unittests.TestUtilities;
 
 public class HaContextMockBase : IHaContext
 {
-    private readonly Dictionary<string, EntityState> _entityStates = new();
     private readonly Subject<Event> _eventsSubject = new();
     private readonly Subject<StateChange> _stateAllChangeSubject = new();
+    public readonly Dictionary<string, EntityState> EntityStates = new();
 
     public HaContextMockBase() => Entities = this.LoadGeneratedEntities().ToList();
 
@@ -18,7 +18,7 @@ public class HaContextMockBase : IHaContext
     public IObservable<StateChange> StateAllChanges() => _stateAllChangeSubject;
 
     public EntityState? GetState(string entityId) =>
-        _entityStates.TryGetValue(entityId, out var result) ? result : null;
+        EntityStates.TryGetValue(entityId, out var result) ? result : null;
 
     public IReadOnlyList<Entity> GetAllEntities() => Entities;
 
@@ -49,8 +49,8 @@ public class HaContextMockBase : IHaContext
 
     public void TriggerStateChange(string entityId, EntityState newState)
     {
-        var oldState = _entityStates.TryGetValue(entityId, out var current) ? current : null;
-        _entityStates[entityId] = newState;
+        var oldState = EntityStates.TryGetValue(entityId, out var current) ? current : null;
+        EntityStates[entityId] = newState;
         _stateAllChangeSubject.OnNext(new StateChange(new Entity(this, entityId), oldState, newState));
     }
 

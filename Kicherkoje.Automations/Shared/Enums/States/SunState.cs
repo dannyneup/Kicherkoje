@@ -1,6 +1,6 @@
-using Kicherkoje.Automations.Helpers.Attributes;
+using Kicherkoje.Automations.Shared.Attributes;
 
-namespace Kicherkoje.Automations.Helpers.Enums.States;
+namespace Kicherkoje.Automations.Shared.Enums.States;
 
 [HaEntityState]
 public enum SunState

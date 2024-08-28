@@ -1,12 +1,13 @@
 using System.Reactive.Concurrency;
 using Kicherkoje.Automations.Apps.General;
 using Kicherkoje.Automations.Configuration.HomeAssistantGenerated;
-using Kicherkoje.Automations.Helpers.Enums.Services;
-using Kicherkoje.Automations.Helpers.Enums.States;
-using Kicherkoje.Automations.Helpers.Extensions;
+using Kicherkoje.Automations.Shared.Enums.Services;
+using Kicherkoje.Automations.Shared.Enums.States;
+using Kicherkoje.Automations.Shared.Extensions;
 using Kicherkoje.Automations.Unittests.TestUtilities;
+using Kicherkoje.Automations.Unittests.TestUtilities.Extensions;
 using Microsoft.Extensions.Logging;
-using NetDaemon.AppModel;
+using NetDaemon.HassModel.Entities;
 using NSubstitute;
 
 namespace Kicherkoje.Automations.Unittests.Apps.General;
@@ -25,53 +26,56 @@ public sealed class GeneralLightsTests
     [Fact]
     public void OnSunRise_TurnOffLights_TurnsOffLightsExceptHallGrowLamp()
     {
-        var (app, config) = InitGeneralLights();
+        var config = InitGeneralLights();
 
         _haContext.TriggerStateChange(_entities.Sun.Sun, SunState.AboveHorizon.GetHaStringRepresentation());
 
         foreach (var lightEntity in _entities.Light.EnumerateAll())
-        {
-            if (config.Value.GrowLights.Contains(lightEntity))
-                continue;
-
-            _haContext.VerifyServiceCalled(lightEntity, typeof(LightService).GetHaStringRepresentation(),
-                LightService.TurnOff.GetHaStringRepresentation());
-        }
+            if (!config.GrowLightEntities.Contains(lightEntity))
+                _haContext.VerifyServiceCalled(lightEntity, typeof(LightService).GetHaStringRepresentation(),
+                    LightService.TurnOff.GetHaStringRepresentation());
     }
 
     [Fact]
     public void OnSunRise_TurnOffLights_DoesNotTurnOffGrowLights()
     {
-        var (app, config) = InitGeneralLights();
+        var config = InitGeneralLights();
 
         _haContext.TriggerStateChange(_entities.Sun.Sun, SunState.AboveHorizon.GetHaStringRepresentation());
 
         foreach (var lightEntity in _entities.Light.EnumerateAll())
-            if (config.Value.GrowLights.Contains(lightEntity))
+            if (config.GrowLightEntities.Contains(lightEntity))
                 _haContext.VerifyServiceCalled(lightEntity, typeof(LightService).GetHaStringRepresentation(),
                     Arg.Any<string>(), 0);
     }
 
-    private (GeneralLights app, IAppConfig<GeneralLightsConfig> config) InitGeneralLights(
-        IAppConfig<GeneralLightsConfig>? config = null)
+    private GeneralLightsMockConfig InitGeneralLights()
     {
-        config ??= CreateDefaultConfig();
-        return new ValueTuple<GeneralLights, IAppConfig<GeneralLightsConfig>>(
-            new GeneralLights(_haContext, Substitute.For<ILogger<GeneralLights>>(), Substitute.For<IScheduler>(),
-                config),
-            config
-        );
+        var growLightEntities = SetUpGrowLightEntityIdAttributes();
+        _ = new GeneralLights(_haContext, Substitute.For<ILogger<GeneralLights>>(), Substitute.For<IScheduler>());
 
-        IAppConfig<GeneralLightsConfig> CreateDefaultConfig()
-        {
-            var growLights = new[]
-            {
-                _entities.Light.HallGrowLamp,
-                _entities.Light.LivingRoomPlantRackLight
-            };
-            var configMock = Substitute.For<IAppConfig<GeneralLightsConfig>>();
-            configMock.Value.Returns(new GeneralLightsConfig(growLights));
-            return configMock;
-        }
+        return new GeneralLightsMockConfig(growLightEntities);
     }
+
+    private List<LightEntity> SetUpGrowLightEntityIdAttributes()
+    {
+        var growLightGroup = _entities.Light.Growlights;
+        var growLightGroupId = growLightGroup.EntityId;
+
+        var growLightChildren = new List<LightEntity>
+            { _entities.Light.HallGrowLamp, _entities.Light.LivingRoomPlantRackLight };
+        var growLightChildrenIds = growLightChildren.Select(g => g.EntityId).ToList();
+        var lightAttributes = new LightAttributes { EntityId = growLightChildrenIds };
+
+        var state = new EntityState { EntityId = growLightGroupId };
+        var stateWithAttributes = new EntityState<LightAttributes>(state)
+            { AttributesJson = lightAttributes.AsJsonElement() };
+
+        _haContext.EntityStates[growLightGroupId] = stateWithAttributes;
+
+        var growLightEntities = growLightChildren.Append(growLightGroup);
+        return growLightEntities.ToList();
+    }
+
+    private record GeneralLightsMockConfig(List<LightEntity> GrowLightEntities);
 }

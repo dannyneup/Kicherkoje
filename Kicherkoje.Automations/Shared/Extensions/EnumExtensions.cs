@@ -1,7 +1,7 @@
 using System.Reflection;
-using Kicherkoje.Automations.Helpers.Attributes;
+using Kicherkoje.Automations.Shared.Attributes;
 
-namespace Kicherkoje.Automations.Helpers.Extensions;
+namespace Kicherkoje.Automations.Shared.Extensions;
 
 public static class EnumExtensions
 {

@@ -1,41 +1,41 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Kicherkoje.Automations.Apps.Shared;
-using Kicherkoje.Automations.Helpers.Enums.States;
-using Kicherkoje.Automations.Helpers.Extensions;
+using Kicherkoje.Automations.Shared.Enums.States;
+using Kicherkoje.Automations.Shared.Extensions;
 
 namespace Kicherkoje.Automations.Apps.General;
 
 [NetDaemonApp(Id = "GeneralLights")]
 public class GeneralLights : AppBase
 {
-    private readonly IAppConfig<GeneralLightsConfig> _config;
-
-
-    public GeneralLights(IHaContext context, ILogger<GeneralLights> logger, IScheduler scheduler,
-        IAppConfig<GeneralLightsConfig> config) : base(context, logger, scheduler)
+    public GeneralLights(IHaContext context, ILogger<GeneralLights> logger, IScheduler scheduler) : base(context,
+        logger, scheduler)
     {
-        _config = config;
-
-        OnSunRise_TurnOffLights();
+        OnSunRise_TurnOffLightsExceptGrowLights();
         OnGrowLightsTurnOn_ScheduleTurnOff();
     }
 
 
-    private void OnSunRise_TurnOffLights()
+    private void OnSunRise_TurnOffLightsExceptGrowLights()
     {
         Entities.Sun.Sun.StateChanges()
             .Where(c => c.New?.State == SunState.AboveHorizon.GetHaStringRepresentation())
             .Subscribe(x =>
                 {
-                    foreach (var lightEntity in Entities.Light.EnumerateAll())
-                    {
-                        if (_config.Value.GrowLights.Contains(lightEntity))
-                            continue;
-                        lightEntity.TurnOff();
-                    }
+                    var growLightsGroup = Entities.Light.Growlights;
+                    var growLightEntities = growLightsGroup.GetChildren() ?? [];
+                    growLightEntities.Add(growLightsGroup);
+
+                    var growLightEntityIds = growLightEntities.Select(entity => entity.EntityId).ToList();
+                    var allLights = Entities.Light.EnumerateAll().ToList();
+
+                    var allLightsExceptGrowLights = allLights
+                        .Where(light => !growLightEntityIds.Contains(light.EntityId))
+                        .ToList();
+
+                    allLightsExceptGrowLights.ForEach(light => light.TurnOff());
                 }
             );
     }
@@ -52,18 +52,4 @@ public class GeneralLights : AppBase
                 )
             );
     }
-}
-
-public class GeneralLightsConfig : ConfigBase
-{
-    public GeneralLightsConfig() =>
-        GrowLights =
-        [
-            Entities.Light.LivingRoomPlantRackLight,
-            Entities.Light.HallGrowLamp
-        ];
-
-    public GeneralLightsConfig(IEnumerable<LightEntity> growLights) => GrowLights = growLights.ToList();
-
-    public IReadOnlyList<LightEntity> GrowLights { get; }
 }

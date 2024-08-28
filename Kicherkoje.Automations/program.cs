@@ -1,5 +1,4 @@
 using System.Reflection;
-using Kicherkoje.Automations.Configuration;
 using Microsoft.Extensions.Hosting;
 using NetDaemon.Extensions.Logging;
 using NetDaemon.Extensions.MqttEntityManager;
@@ -23,8 +22,7 @@ try
                     .AddAppsFromAssembly(Assembly.GetExecutingAssembly())
                     .AddNetDaemonStateManager()
                     .AddNetDaemonScheduler()
-                    .AddHomeAssistantGenerated()
-                    .AddAppConfigurations();
+                    .AddHomeAssistantGenerated();
             })
         .Build()
         .RunAsync()

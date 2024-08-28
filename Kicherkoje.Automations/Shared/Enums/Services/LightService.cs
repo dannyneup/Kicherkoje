@@ -1,6 +1,6 @@
-using Kicherkoje.Automations.Helpers.Attributes;
+using Kicherkoje.Automations.Shared.Attributes;
 
-namespace Kicherkoje.Automations.Helpers.Enums.Services;
+namespace Kicherkoje.Automations.Shared.Enums.Services;
 
 [HaServiceDomain]
 [HaStringRepresentation("light")]
