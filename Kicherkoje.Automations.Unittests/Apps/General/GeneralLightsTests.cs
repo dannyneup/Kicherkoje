@@ -1,9 +1,7 @@
 using System.Reactive.Concurrency;
 using Kicherkoje.Automations.Apps.General;
 using Kicherkoje.Automations.Configuration.HomeAssistantGenerated;
-using Kicherkoje.Automations.Shared.Enums.Services;
-using Kicherkoje.Automations.Shared.Enums.States;
-using Kicherkoje.Automations.Shared.Extensions;
+using Kicherkoje.Automations.Shared.Enumerations.States;
 using Kicherkoje.Automations.Unittests.TestUtilities;
 using Kicherkoje.Automations.Unittests.TestUtilities.Extensions;
 using Microsoft.Extensions.Logging;
@@ -28,12 +26,12 @@ public sealed class GeneralLightsTests
     {
         var config = InitGeneralLights();
 
-        _haContext.TriggerStateChange(_entities.Sun.Sun, SunState.AboveHorizon.GetHaStringRepresentation());
+        _haContext.TriggerStateChange(_entities.Sun.Sun, SunState.AboveHorizon.Name);
 
         foreach (var lightEntity in _entities.Light.EnumerateAll())
             if (!config.GrowLightEntities.Contains(lightEntity))
-                _haContext.VerifyServiceCalled(lightEntity, typeof(LightService).GetHaStringRepresentation(),
-                    LightService.TurnOff.GetHaStringRepresentation());
+                _haContext.VerifyServiceCalled(lightEntity, "light",
+                    "turn_off");
     }
 
     [Fact]
@@ -41,11 +39,11 @@ public sealed class GeneralLightsTests
     {
         var config = InitGeneralLights();
 
-        _haContext.TriggerStateChange(_entities.Sun.Sun, SunState.AboveHorizon.GetHaStringRepresentation());
+        _haContext.TriggerStateChange(_entities.Sun.Sun, SunState.AboveHorizon.Name);
 
         foreach (var lightEntity in _entities.Light.EnumerateAll())
             if (config.GrowLightEntities.Contains(lightEntity))
-                _haContext.VerifyServiceCalled(lightEntity, typeof(LightService).GetHaStringRepresentation(),
+                _haContext.VerifyServiceCalled(lightEntity, "light",
                     Arg.Any<string>(), 0);
     }
 

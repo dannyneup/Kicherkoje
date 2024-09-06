@@ -2,7 +2,7 @@ using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Kicherkoje.Automations.Apps.Shared;
-using Kicherkoje.Automations.Shared.Enums.States;
+using Kicherkoje.Automations.Shared.Enumerations.States;
 using Kicherkoje.Automations.Shared.Extensions;
 
 namespace Kicherkoje.Automations.Apps.General;
@@ -21,7 +21,7 @@ public class GeneralLights : AppBase
     private void OnSunRise_TurnOffLightsExceptGrowLights()
     {
         Entities.Sun.Sun.StateChanges()
-            .Where(c => c.New?.State == SunState.AboveHorizon.GetHaStringRepresentation())
+            .Where(c => c.New?.State == SunState.AboveHorizon.Name)
             .Subscribe(x =>
                 {
                     var growLightsGroup = Entities.Light.Growlights;
@@ -44,7 +44,7 @@ public class GeneralLights : AppBase
     {
         Entities.Light.Growlights
             .StateChanges()
-            .Where(s => s.New?.State == LightState.On.GetHaStringRepresentation())
+            .Where(s => s.New?.State == LightState.On.Name)
             .Subscribe(_ =>
                 Scheduler.Schedule(
                     new TimeSpan(12, 0, 0), () =>
