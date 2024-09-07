@@ -2,5 +2,5 @@ namespace Kicherkoje.Automations.Shared.Enumerations.Types;
 
 public abstract class EventType : Enumeration
 {
-    public static readonly EnumerationItem CallService = new("call_service");
+    public static EnumerationItem CallService => new("call_service");
 }

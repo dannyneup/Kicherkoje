@@ -1,6 +1,7 @@
 using System.Reactive.Concurrency;
 using Kicherkoje.Automations.Apps.General;
 using Kicherkoje.Automations.Configuration.HomeAssistantGenerated;
+using Kicherkoje.Automations.Shared.Enumerations.Services;
 using Kicherkoje.Automations.Shared.Enumerations.States;
 using Kicherkoje.Automations.Unittests.TestUtilities;
 using Kicherkoje.Automations.Unittests.TestUtilities.Extensions;
@@ -30,8 +31,8 @@ public sealed class GeneralLightsTests
 
         foreach (var lightEntity in _entities.Light.EnumerateAll())
             if (!config.GrowLightEntities.Contains(lightEntity))
-                _haContext.VerifyServiceCalled(lightEntity, "light",
-                    "turn_off");
+                _haContext.VerifyServiceCalled(lightEntity, LightService.Domain.Name,
+                    LightService.TurnOff.Name);
     }
 
     [Fact]
@@ -43,7 +44,7 @@ public sealed class GeneralLightsTests
 
         foreach (var lightEntity in _entities.Light.EnumerateAll())
             if (config.GrowLightEntities.Contains(lightEntity))
-                _haContext.VerifyServiceCalled(lightEntity, "light",
+                _haContext.VerifyServiceCalled(lightEntity, LightService.Domain.Name,
                     Arg.Any<string>(), 0);
     }
 
