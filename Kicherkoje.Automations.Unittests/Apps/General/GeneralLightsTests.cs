@@ -27,12 +27,12 @@ public sealed class GeneralLightsTests
     {
         var config = InitGeneralLights();
 
-        _haContext.TriggerStateChange(_entities.Sun.Sun, SunState.AboveHorizon.Name);
+        _haContext.TriggerStateChange(_entities.Sun.Sun, SunState.AboveHorizon);
 
         foreach (var lightEntity in _entities.Light.EnumerateAll())
             if (!config.GrowLightEntities.Contains(lightEntity))
-                _haContext.VerifyServiceCalled(lightEntity, LightService.Domain.Name,
-                    LightService.TurnOff.Name);
+                _haContext.VerifyServiceCalled(LightService.Domain,
+                    LightService.TurnOff, lightEntity);
     }
 
     [Fact]
@@ -40,12 +40,12 @@ public sealed class GeneralLightsTests
     {
         var config = InitGeneralLights();
 
-        _haContext.TriggerStateChange(_entities.Sun.Sun, SunState.AboveHorizon.Name);
+        _haContext.TriggerStateChange(_entities.Sun.Sun, SunState.AboveHorizon);
 
         foreach (var lightEntity in _entities.Light.EnumerateAll())
             if (config.GrowLightEntities.Contains(lightEntity))
-                _haContext.VerifyServiceCalled(lightEntity, LightService.Domain.Name,
-                    Arg.Any<string>(), 0);
+                _haContext.VerifyServiceCalled(LightService.Domain,
+                    Arg.Any<string>(), lightEntity, 0);
     }
 
     private GeneralLightsMockConfig InitGeneralLights()

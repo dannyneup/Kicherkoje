@@ -37,7 +37,7 @@ public class NotificationRelayApp : AppBase
 
         bool IsPersistentNotificationServiceCall(Event @event)
         {
-            if (@event.EventType != EventType.CallService.Name)
+            if (@event.EventType != EventType.CallService)
                 return false;
 
             var serviceProperties = TryGetServiceProperties(@event);

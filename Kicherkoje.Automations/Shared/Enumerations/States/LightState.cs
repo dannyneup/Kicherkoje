@@ -1,7 +1,7 @@
 namespace Kicherkoje.Automations.Shared.Enumerations.States;
 
-public abstract class LightState : Enumeration
+public abstract class LightState
 {
-    public static EnumerationItem On => new("on");
-    public static EnumerationItem Off => new("off");
+    public static string On => "on";
+    public static string Off => "off";
 }

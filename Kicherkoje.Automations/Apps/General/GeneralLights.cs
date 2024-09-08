@@ -21,7 +21,7 @@ public class GeneralLights : AppBase
     private void OnSunRise_TurnOffLightsExceptGrowLights()
     {
         Entities.Sun.Sun.StateChanges()
-            .Where(c => c.New?.State == SunState.AboveHorizon.Name)
+            .Where(c => c.New?.State == SunState.AboveHorizon)
             .Subscribe(x =>
                 {
                     var growLightsGroup = Entities.Light.Growlights;
@@ -44,7 +44,7 @@ public class GeneralLights : AppBase
     {
         Entities.Light.Growlights
             .StateChanges()
-            .Where(s => s.New?.State == LightState.On.Name)
+            .Where(s => s.New?.State == LightState.On)
             .Subscribe(_ =>
                 Scheduler.Schedule(
                     new TimeSpan(12, 0, 0), () =>

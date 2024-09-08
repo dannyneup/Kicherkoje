@@ -1,7 +1,7 @@
 namespace Kicherkoje.Automations.Shared.Enumerations.States;
 
-public abstract class SunState : Enumeration
+public abstract class SunState
 {
-    public static EnumerationItem BelowHorizon => new("below_horizon");
-    public static EnumerationItem AboveHorizon => new("above_horizon");
+    public static string BelowHorizon => "below_horizon";
+    public static string AboveHorizon => "above_horizon";
 }

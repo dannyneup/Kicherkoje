@@ -1,6 +1,6 @@
 namespace Kicherkoje.Automations.Shared.Enumerations.Types;
 
-public abstract class EventType : Enumeration
+public abstract class EventType
 {
-    public static EnumerationItem CallService => new("call_service");
+    public static string CallService => "call_service";
 }
