@@ -25,7 +25,8 @@ public class GeneralLights : AppBase
             .Subscribe(x =>
                 {
                     var growLightsGroup = Entities.Light.Growlights;
-                    var growLightEntities = growLightsGroup.GetChildren() ?? [];
+                    var growLightEntities = growLightsGroup.GetChildren(Logger);
+
                     growLightEntities.Add(growLightsGroup);
 
                     var growLightEntityIds = growLightEntities.Select(entity => entity.EntityId).ToList();

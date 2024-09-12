@@ -2,6 +2,7 @@ using FluentAssertions;
 using Kicherkoje.Automations.Configuration.HomeAssistantGenerated;
 using Kicherkoje.Automations.Shared.Extensions;
 using Kicherkoje.Automations.Unittests.TestUtilities.Extensions;
+using Microsoft.Extensions.Logging;
 using NetDaemon.HassModel.Entities;
 using NSubstitute;
 
@@ -9,14 +10,16 @@ namespace Kicherkoje.Automations.Unittests.Shared.Extensions;
 
 public class EntityExtensionTests
 {
-    private readonly IHaContext _haContext;
     private readonly List<LightEntity> _children;
     private readonly List<string> _childrenIds;
     private readonly LightEntity _group;
+    private readonly IHaContext _haContext;
+    private readonly ILogger _logger;
 
     public EntityExtensionTests()
     {
         _haContext = Substitute.For<IHaContext>();
+        _logger = Substitute.For<ILogger>();
 
         _group = new LightEntity(_haContext, "group");
         _children =
@@ -43,10 +46,10 @@ public class EntityExtensionTests
     }
 
     [Fact]
-    public async Task GetChildren_ReturnsGroupsChildren()
+    public void GetChildren_ReturnsGroupsChildren()
     {
-        var returnedChildren = _group.GetChildren();
-        var returnedChildrenIds = returnedChildren?.Select(entity => entity.EntityId).ToList();
+        var returnedChildren = _group.GetChildren(_logger);
+        var returnedChildrenIds = returnedChildren.Select(entity => entity.EntityId).ToList();
 
         returnedChildrenIds.Should().BeEquivalentTo(_childrenIds);
     }
@@ -61,9 +64,19 @@ public class EntityExtensionTests
             return result;
         });
 
-        var returnedChildren = _group.GetChildren();
-        var returnedChildrenIds = returnedChildren?.Select(entity => entity.EntityId).ToList();
+        var returnedChildren = _group.GetChildren(_logger);
+        var returnedChildrenIds = returnedChildren.Select(entity => entity.EntityId).ToList();
 
         returnedChildrenIds.Should().BeEquivalentTo(_childrenIds);
+    }
+
+    [Fact]
+    public void GetChildren_NoChildren_ReturnsEmptyAndCreatesLog()
+    {
+        var entity = _children.First();
+        var returnedChildrenIds = entity.GetChildren(_logger);
+
+        returnedChildrenIds.Should().BeEmpty();
+        _logger.Received().LogNoEntityChildrenFoundMessage(entity);
     }
 }
