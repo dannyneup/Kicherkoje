@@ -8,13 +8,19 @@ public class HaContextMock : HaContextMockBase
     public IHaContext Mock { get; } = Substitute.For<IHaContext>();
 
     public override void CallService(string domain, string service, ServiceTarget? target = null,
-        object? data = null) =>
+        object? data = null)
+    {
         Mock.CallService(domain, service, target, data);
+        base.CallService(domain, service, target, data);
+    }
 
-    public override void SendEvent(string eventType, object? data = null) =>
+    public override void SendEvent(string eventType, object? data = null)
+    {
         Mock.SendEvent(eventType, data);
+        base.SendEvent(eventType, data);
+    }
 
-    public override void VerifyServiceCalled(Entity entity, string domain, string service, int count = 1) =>
+    public void VerifyServiceCalled(Entity entity, string domain, string service, int count = 1) =>
         Mock
             .Received(count)
             .CallService(

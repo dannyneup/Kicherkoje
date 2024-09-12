@@ -31,8 +31,8 @@ public sealed class GeneralLightsTests
 
         foreach (var lightEntity in _entities.Light.EnumerateAll())
             if (!config.GrowLightEntities.Contains(lightEntity))
-                _haContext.VerifyServiceCalled(LightService.Domain,
-                    LightService.TurnOff, lightEntity);
+                _haContext.VerifyServiceCalled(lightEntity, LightService.Domain,
+                    LightService.TurnOff);
     }
 
     [Fact]
@@ -44,8 +44,8 @@ public sealed class GeneralLightsTests
 
         foreach (var lightEntity in _entities.Light.EnumerateAll())
             if (config.GrowLightEntities.Contains(lightEntity))
-                _haContext.VerifyServiceCalled(LightService.Domain,
-                    Arg.Any<string>(), lightEntity, 0);
+                _haContext.VerifyServiceCalled(lightEntity, LightService.Domain,
+                    Arg.Any<string>(), 0);
     }
 
     private GeneralLightsMockConfig InitGeneralLights()

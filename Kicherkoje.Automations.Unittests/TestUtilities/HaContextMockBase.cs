@@ -11,19 +11,24 @@ public class HaContextMockBase : IHaContext
     private readonly Subject<StateChange> _stateAllChangeSubject = new();
     public readonly Dictionary<string, EntityState> EntityStates = new();
 
-    public HaContextMockBase() => Entities = this.LoadGeneratedEntities().ToList();
-
-    public List<Entity> Entities { get; set; }
-
     public IObservable<StateChange> StateAllChanges() => _stateAllChangeSubject;
 
     public EntityState? GetState(string entityId) =>
         EntityStates.TryGetValue(entityId, out var result) ? result : null;
 
-    public IReadOnlyList<Entity> GetAllEntities() => Entities;
+    public IReadOnlyList<Entity> GetAllEntities() => EntityStates.Keys.Select(s => new Entity(this, s)).ToList();
 
     public virtual void CallService(string domain, string service, ServiceTarget? target = null, object? data = null)
     {
+        var eventData = new Dictionary<string, object?>
+        {
+            { "domain", domain },
+            { "service", service },
+            { "target", target },
+            { "service_data", data }
+        };
+
+        SendEvent("call_service", eventData);
     }
 
     public Task<JsonElement?> CallServiceWithResponseAsync(string domain, string service, ServiceTarget? target = null,
@@ -33,6 +38,13 @@ public class HaContextMockBase : IHaContext
 
     public virtual void SendEvent(string eventType, object? data = null)
     {
+        var @event = new Event
+        {
+            EventType = eventType,
+            DataElement = data?.AsJsonElement() ?? default
+        };
+
+        _eventsSubject.OnNext(@event);
     }
 
     public IObservable<Event> Events => _eventsSubject;
@@ -47,19 +59,23 @@ public class HaContextMockBase : IHaContext
         TriggerStateChange(entity.EntityId, newState);
     }
 
-    public void TriggerStateChange(string entityId, EntityState newState)
+    private void TriggerStateChange(string entityId, EntityState newState)
     {
         var oldState = EntityStates.TryGetValue(entityId, out var current) ? current : null;
         EntityStates[entityId] = newState;
+
         _stateAllChangeSubject.OnNext(new StateChange(new Entity(this, entityId), oldState, newState));
+
+        var eventData = new Dictionary<string, object?>
+        {
+            { "entity_id", entityId },
+            { "old_state", oldState?.AsJsonElement() ?? JsonDocument.Parse("{}").RootElement },
+            { "new_state", newState.AsJsonElement() }
+        };
+
+        SendEvent("state_changed", eventData);
     }
 
-    public void TriggerEvent(Event @event)
-    {
+    public void TriggerEvent(Event @event) =>
         _eventsSubject.OnNext(@event);
-    }
-
-    public virtual void VerifyServiceCalled(Entity entity, string domain, string service, int count = 1)
-    {
-    }
 }
