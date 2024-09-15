@@ -9,7 +9,7 @@ public class HaContextMockBase : IHaContext
 {
     private readonly Subject<Event> _eventsSubject = new();
     private readonly Subject<StateChange> _stateAllChangeSubject = new();
-    public readonly Dictionary<string, EntityState> EntityStates = new();
+    public Dictionary<string, EntityState> EntityStates { get; } = new();
 
     public IObservable<StateChange> StateAllChanges() => _stateAllChangeSubject;
 
