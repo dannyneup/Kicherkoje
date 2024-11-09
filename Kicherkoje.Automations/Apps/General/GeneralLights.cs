@@ -1,17 +1,20 @@
 using System.Linq;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using Kicherkoje.Automations.Apps.Shared;
 using Kicherkoje.Automations.Shared.Enumerations.States;
 using Kicherkoje.Automations.Shared.Extensions;
+using Kicherkoje.Automations.Shared.Services;
+using Quartz;
 
 namespace Kicherkoje.Automations.Apps.General;
 
 [NetDaemonApp(Id = "GeneralLights")]
 public class GeneralLights : AppBase
 {
-    public GeneralLights(IHaContext context, ILogger<GeneralLights> logger, IScheduler scheduler) : base(context,
-        logger, scheduler)
+    public GeneralLights(IHaContext context, ILogger<GeneralLights> logger, ISchedulerService schedulerService) : base(
+        context,
+        logger, schedulerService)
     {
         OnSunRise_TurnOffLightsExceptGrowLights();
         OnGrowLightsTurnOn_ScheduleTurnOff();
@@ -46,11 +49,18 @@ public class GeneralLights : AppBase
         Entities.Light.Growlights
             .StateChanges()
             .Where(s => s.New?.State == LightState.On)
-            .Subscribe(_ =>
-                Scheduler.Schedule(
-                    new TimeSpan(12, 0, 0), () =>
-                        Entities.Light.Growlights.TurnOff()
-                )
+            .SubscribeAsync(async _ =>
+                await SchedulerService.ScheduleJobAsync<TrunOffGrowLights>(TimeSpan.FromHours(12), true)
             );
+    }
+
+    private class TrunOffGrowLights(IHaContext haContext) : IJob
+    {
+        public Task Execute(IJobExecutionContext context)
+        {
+            var entities = new Entities(haContext);
+            entities.Light.Growlights.TurnOff();
+            return Task.CompletedTask;
+        }
     }
 }

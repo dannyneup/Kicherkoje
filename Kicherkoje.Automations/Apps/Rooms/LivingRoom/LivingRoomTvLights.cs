@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using System.Reactive.Concurrency;
 using Kicherkoje.Automations.Apps.Shared;
+using Kicherkoje.Automations.Shared.Services;
 using NetDaemon.HassModel.Entities;
 
 namespace Kicherkoje.Automations.Apps.Rooms.LivingRoom;
@@ -8,8 +8,8 @@ namespace Kicherkoje.Automations.Apps.Rooms.LivingRoom;
 [NetDaemonApp(Id = "LivingRoomTvLights")]
 public class LivingRoomTvLights : AppBase
 {
-    public LivingRoomTvLights(IHaContext haContext, ILogger<LivingRoomTvLights> logger, IScheduler scheduler) : base(
-        haContext, logger, scheduler)
+    public LivingRoomTvLights(IHaContext haContext, ILogger<LivingRoomTvLights> logger, ISchedulerService schedulerService) : base(
+        haContext, logger, schedulerService)
     {
         OnSyncBoxDeviceLinked_TriggerLightSync();
     }

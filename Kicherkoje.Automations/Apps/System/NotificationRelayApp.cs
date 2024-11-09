@@ -1,16 +1,16 @@
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Text.Json;
 using Kicherkoje.Automations.Apps.Shared;
 using Kicherkoje.Automations.Shared.Enumerations.Types;
+using Kicherkoje.Automations.Shared.Services;
 
 namespace Kicherkoje.Automations.Apps.System;
 
 [NetDaemonApp]
 public class NotificationRelayApp : AppBase
 {
-    public NotificationRelayApp(IHaContext context, ILogger<NotificationRelayApp> logger, IScheduler scheduler) : base(
-        context, logger, scheduler)
+    public NotificationRelayApp(IHaContext context, ILogger<NotificationRelayApp> logger, ISchedulerService schedulerService) : base(
+        context, logger, schedulerService)
     {
         OnPersistantNotificationCreated_CreatePushNotification();
     }

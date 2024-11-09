@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using System.Reactive.Concurrency;
 using System.Reactive.Subjects;
 using Kicherkoje.Automations.Apps.Shared;
 using Kicherkoje.Automations.Apps.StateManagers.Shared;
 using Kicherkoje.Automations.Shared.Enumerations;
 using Kicherkoje.Automations.Shared.Enumerations.States;
+using Kicherkoje.Automations.Shared.Services;
 using NetDaemon.HassModel.Entities;
 
 namespace Kicherkoje.Automations.Apps.StateManagers;
@@ -20,8 +20,8 @@ public class SleepStateManager : AppBase, ISleepStateManager
     private readonly Subject<StateChange<SleepState>> _stateChanges = new();
     private SleepState? _currentState;
 
-    public SleepStateManager(IHaContext haContext, ILogger logger, IScheduler scheduler) : base(haContext, logger,
-        scheduler)
+    public SleepStateManager(IHaContext haContext, ILogger logger, ISchedulerService schedulerService) : base(haContext, logger,
+        schedulerService)
     {
         var entitiesOfInterest = new List<Entity>
         {

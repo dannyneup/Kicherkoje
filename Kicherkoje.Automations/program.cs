@@ -24,7 +24,8 @@ try
                     .AddNetDaemonStateManager()
                     .AddNetDaemonScheduler()
                     .AddHomeAssistantGenerated()
-                    .AddStateManagers();
+                    .AddStateManagers()
+                    .AddScheduler();
             })
         .Build()
         .RunAsync()
