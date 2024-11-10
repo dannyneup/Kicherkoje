@@ -23,6 +23,8 @@ class Build : NukeBuild
 
     AbsolutePath PublishDirectory => TargetProject.Directory / "bin" / "Publish";
 
+    AbsolutePath PublishQuartzDatabasePath => PublishDirectory / "quartz.sqlite";
+
     Target Initialize => d => d
         .Executes(() =>
         {
@@ -92,15 +94,22 @@ class Build : NukeBuild
         });
 
     Target SynchronizeFiles => d => d
-        .DependsOn(CheckNetDaemonVersion, Publish)
+        .DependsOn(Publish, Publish)
         .Executes(() =>
+        {
             Pwsh(
                 $"""
                      -Command
-                     rsync -a --delete {PublishDirectory}/. {HomeAssistantSshHost}:{HostsNetDaemonDirectory}
+                     rsync -a --delete {PublishDirectory}/. --exclude {PublishQuartzDatabasePath} {HomeAssistantSshHost}:{HostsNetDaemonDirectory}
                  """
-            )
-        );
+            );
+            Pwsh(
+                $"""
+                    -Command
+                    rsync -a --ignore-existing {PublishQuartzDatabasePath} {HomeAssistantSshHost}:{HostsNetDaemonDirectory}
+                 """
+            );
+        });
 
     Target RestartAddon => d => d
         .DependsOn(SynchronizeFiles)

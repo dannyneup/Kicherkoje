@@ -1,47 +1,40 @@
 using System.Threading.Tasks;
-using Kicherkoje.Automations.Shared.Extensions;
 using Quartz;
 
 namespace Kicherkoje.Automations.Shared.Services;
 
 public interface ISchedulerService
 {
-    public Task ScheduleJobAsync<TJob>(TimeSpan delay, bool replace = false) where TJob : IJob;
+    Task InitializeAsync();
+    Task ScheduleJobAsync<TJob>(TimeSpan delay, bool replace = false) where TJob : IJob;
 }
 
-
-public class SchedulerService : ISchedulerService
+public class SchedulerService(ISchedulerFactory schedulerFactory, ILogger<SchedulerService> logger)
+    : ISchedulerService
 {
-    private readonly Lazy<Task<IScheduler>> _scheduler;
-    private readonly ILogger<SchedulerService> _logger;
+    private IScheduler? _scheduler;
+    private IScheduler Scheduler => _scheduler ?? throw new NullReferenceException("Scheduler is not yet initialized.");
 
-    public SchedulerService(ISchedulerFactory schedulerFactory, ILogger<SchedulerService> logger)
+    public async Task InitializeAsync()
     {
-        _scheduler = new Lazy<Task<IScheduler>>(async () =>
-        {
-            var scheduler = await schedulerFactory.GetScheduler();
-            await scheduler.Start();
-            return scheduler;
-        });
-        _logger = logger;
+        _scheduler = await schedulerFactory.GetScheduler();
+        await _scheduler.Start();
     }
 
     public async Task ScheduleJobAsync<TJob>(TimeSpan delay, bool replace = false) where TJob : IJob
     {
-        var scheduler = await _scheduler.Value;
-
         var trigger = TriggerBuilder.Create()
             .StartAt(DateTimeOffset.Now.Add(delay))
             .Build();
 
-        var jobKey = await GetJobKeyAsync<TJob>(scheduler, replace);
+        var jobKey = await GetJobKeyAsync<TJob>(Scheduler, replace);
 
         var job = JobBuilder.Create<TJob>()
             .WithIdentity(jobKey)
             .Build();
 
-        await scheduler.ScheduleJob(job, [trigger], replace);
-        _logger.LogJobScheduled(job.JobType, job.JobDataMap.WrappedMap, trigger.StartTimeUtc);
+        await Scheduler.ScheduleJob(job, [trigger], replace);
+        logger.LogInformation($"Job '{jobKey}' scheduled to run at {trigger.StartTimeUtc}.");
     }
 
     private static async Task<JobKey> GetJobKeyAsync<TJob>(IScheduler scheduler, bool replace) where TJob : IJob
@@ -61,5 +54,4 @@ public class SchedulerService : ISchedulerService
 
         return jobKey;
     }
-
 }
