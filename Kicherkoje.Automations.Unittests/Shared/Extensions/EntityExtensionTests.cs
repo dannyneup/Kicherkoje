@@ -1,10 +1,8 @@
-using FluentAssertions;
 using Kicherkoje.Automations.Configuration.HomeAssistantGenerated;
 using Kicherkoje.Automations.Shared.Extensions;
 using Kicherkoje.Automations.Unittests.TestUtilities.Extensions;
 using Microsoft.Extensions.Logging;
 using NetDaemon.HassModel.Entities;
-using NSubstitute;
 
 namespace Kicherkoje.Automations.Unittests.Shared.Extensions;
 
@@ -42,6 +40,7 @@ public class EntityExtensionTests
             };
 
             _haContext.GetState(_group.EntityId).Returns(stateWithAttributes);
+            _children.ForEach(entity => _haContext.Entity(entity.EntityId).Returns(entity));
         }
     }
 
