@@ -72,6 +72,7 @@ class Build : NukeBuild
                 .SetConfiguration(global::Configuration.Release)
                 .SetOutput(PublishDirectory)));
 
+    //todo: fix version check
     Target CheckNetDaemonVersion => d => d
         .Executes(() =>
         {
