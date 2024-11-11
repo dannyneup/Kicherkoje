@@ -9,7 +9,7 @@ public static partial class LoggerMessageDefinitions
     public static partial void LogNoEntityChildrenFoundMessage(this ILogger logger, Entity parentEntity);
 
     [LoggerMessage(Level = LogLevel.Debug,
-        Message = "Job with of type {jobType} with job-data {jobData} scheduled for {triggerStartTime}.")]
-    public static partial void LogJobScheduled(this ILogger logger, Type jobType, IDictionary<string, object> jobData,
+        Message = "Job with key {jobKey} with job-data {jobData} scheduled for {triggerStartTime}.")]
+    public static partial void LogJobScheduled(this ILogger logger, string jobKey, IDictionary<string, object> jobData,
         DateTimeOffset triggerStartTime);
 }

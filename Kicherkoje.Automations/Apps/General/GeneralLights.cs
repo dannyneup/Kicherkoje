@@ -50,7 +50,7 @@ public class GeneralLights : AppBase
             .StateChanges()
             .Where(s => s.New?.State == LightState.On)
             .SubscribeAsync(async _ =>
-                await SchedulerService.ScheduleJobAsync<TrunOffGrowLights>(TimeSpan.FromHours(12), true)
+                await SchedulerService.ScheduleJobAsync<TrunOffGrowLights>(TimeSpan.FromHours(12), ISchedulerService.ConflictBehavior.KeepExisting)
             );
     }
 
