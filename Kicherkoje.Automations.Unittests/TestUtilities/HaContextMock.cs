@@ -1,5 +1,4 @@
 using NetDaemon.HassModel.Entities;
-using NSubstitute;
 
 namespace Kicherkoje.Automations.Unittests.TestUtilities;
 

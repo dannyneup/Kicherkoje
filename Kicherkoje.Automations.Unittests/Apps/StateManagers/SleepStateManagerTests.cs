@@ -1,14 +1,12 @@
-using System.Reactive.Concurrency;
-using FluentAssertions;
 using Kicherkoje.Automations.Apps.StateManagers;
 using Kicherkoje.Automations.Apps.StateManagers.Shared;
 using Kicherkoje.Automations.Configuration.HomeAssistantGenerated;
 using Kicherkoje.Automations.Shared.Enumerations;
 using Kicherkoje.Automations.Shared.Enumerations.States;
+using Kicherkoje.Automations.Shared.Services;
 using Kicherkoje.Automations.Unittests.TestUtilities;
 using Microsoft.Extensions.Logging;
 using NetDaemon.HassModel.Entities;
-using NSubstitute;
 
 namespace Kicherkoje.Automations.Unittests.Apps.StateManagers;
 
@@ -68,7 +66,7 @@ public class SleepStateManagerTests
         List<Resident> expectedSleepingResidents)
     {
         SetupContext();
-        var sut = new SleepStateManager(_context, Substitute.For<ILogger>(), Substitute.For<IScheduler>());
+        var sut = new SleepStateManager(_context, Substitute.For<ILogger>(), Substitute.For<ISchedulerService>());
         var action = Substitute.For<Action<StateChange<SleepState>>>();
         sut.StateChanges().Subscribe(action);
 
@@ -109,11 +107,14 @@ public class SleepStateManagerTests
     [InlineData("binary_sensor.iphone_von_liv_grete_focus")]
     public void FocusStateEntityChanged_TriggersSleepStateChange(string entityId)
     {
-        var sut = new SleepStateManager(_context, Substitute.For<ILogger>(), Substitute.For<IScheduler>());
+        var sut = new SleepStateManager(_context, Substitute.For<ILogger>(), Substitute.For<ISchedulerService>());
         var action = Substitute.For<Action<StateChange<SleepState>>>();
         sut.StateChanges().Subscribe(action);
 
-        _context.TriggerStateChange(_context.Entity(entityId), "on");
+        var entity = Substitute.For<IEntityCore>();
+        entity.EntityId.Returns(entityId);
+
+        _context.TriggerStateChange(entity, "on");
 
         action.Received(1).Invoke(Arg.Any<StateChange<SleepState>>());
     }
@@ -123,11 +124,14 @@ public class SleepStateManagerTests
     [InlineData("input_select.liv_focus")]
     public void FocusModeEntityChanged_TriggersSleepStateChange(string entityId)
     {
-        var sut = new SleepStateManager(_context, Substitute.For<ILogger>(), Substitute.For<IScheduler>());
+        var sut = new SleepStateManager(_context, Substitute.For<ILogger>(), Substitute.For<ISchedulerService>());
         var action = Substitute.For<Action<StateChange<SleepState>>>();
         sut.StateChanges().Subscribe(action);
 
-        _context.TriggerStateChange(_context.Entity(entityId), FocusMode.Sleep);
+        var entity = Substitute.For<IEntityCore>();
+        entity.EntityId.Returns(entityId);
+
+        _context.TriggerStateChange(entity, FocusMode.Sleep);
 
         action.Received(1).Invoke(Arg.Any<StateChange<SleepState>>());
     }

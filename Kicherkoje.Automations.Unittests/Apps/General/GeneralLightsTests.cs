@@ -1,13 +1,12 @@
-using System.Reactive.Concurrency;
 using Kicherkoje.Automations.Apps.General;
 using Kicherkoje.Automations.Configuration.HomeAssistantGenerated;
 using Kicherkoje.Automations.Shared.Enumerations.Services;
 using Kicherkoje.Automations.Shared.Enumerations.States;
+using Kicherkoje.Automations.Shared.Services;
 using Kicherkoje.Automations.Unittests.TestUtilities;
 using Kicherkoje.Automations.Unittests.TestUtilities.Extensions;
 using Microsoft.Extensions.Logging;
 using NetDaemon.HassModel.Entities;
-using NSubstitute;
 
 namespace Kicherkoje.Automations.Unittests.Apps.General;
 
@@ -51,7 +50,7 @@ public sealed class GeneralLightsTests
     private GeneralLightsMockConfig InitGeneralLights()
     {
         var growLightEntities = SetUpGrowLightEntityIdAttributes();
-        _ = new GeneralLights(_haContext, Substitute.For<ILogger<GeneralLights>>(), Substitute.For<IScheduler>());
+        _ = new GeneralLights(_haContext, Substitute.For<ILogger<GeneralLights>>(), Substitute.For<ISchedulerService>());
 
         return new GeneralLightsMockConfig(growLightEntities);
     }

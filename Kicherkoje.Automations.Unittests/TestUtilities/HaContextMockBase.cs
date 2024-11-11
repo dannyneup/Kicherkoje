@@ -51,7 +51,7 @@ public class HaContextMockBase : IHaContext
 
     public EntityRegistration GetEntityRegistration(string entityId) => throw new NotSupportedException();
 
-    public void TriggerStateChange(Entity entity, string newStateValue, object? attributes = null)
+    public void TriggerStateChange(IEntityCore entity, string newStateValue, object? attributes = null)
     {
         var newState = new EntityState { State = newStateValue };
         if (attributes != null) newState = newState with { AttributesJson = attributes.AsJsonElement() };

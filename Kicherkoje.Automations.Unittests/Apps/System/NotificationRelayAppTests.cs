@@ -1,10 +1,9 @@
-using System.Reactive.Concurrency;
 using Kicherkoje.Automations.Apps.System;
 using Kicherkoje.Automations.Configuration.HomeAssistantGenerated;
 using Kicherkoje.Automations.Shared.Enumerations.Services;
+using Kicherkoje.Automations.Shared.Services;
 using Kicherkoje.Automations.Unittests.TestUtilities;
 using Microsoft.Extensions.Logging;
-using NSubstitute;
 
 namespace Kicherkoje.Automations.Unittests.Apps.System;
 
@@ -64,5 +63,5 @@ public class NotificationRelayAppTests
 
 
     private NotificationRelayApp InitializeNotificationRelayApp() =>
-        new(_haContext, Substitute.For<ILogger<NotificationRelayApp>>(), Substitute.For<IScheduler>());
+        new(_haContext, Substitute.For<ILogger<NotificationRelayApp>>(), Substitute.For<ISchedulerService>());
 }
