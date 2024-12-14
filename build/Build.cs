@@ -11,7 +11,7 @@ using Project = Nuke.Common.ProjectModel.Project;
 class Build : NukeBuild
 {
     const string HomeAssistantSshHost = "homeassistant";
-    const string NetDaemonAddonContainerId = "c6a2317c_netdaemon4";
+    const string NetDaemonAddonContainerId = "c6a2317c_netdaemon5";
     const string HostsNetDaemonDirectory = "/config/netdaemon4";
 
     [Solution(GenerateProjects = true)] readonly Solution Solution;
