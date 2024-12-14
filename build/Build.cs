@@ -12,7 +12,7 @@ class Build : NukeBuild
 {
     const string HomeAssistantSshHost = "homeassistant";
     const string NetDaemonAddonContainerId = "c6a2317c_netdaemon5";
-    const string HostsNetDaemonDirectory = "/config/netdaemon4";
+    const string HostsNetDaemonDirectory = "/config/netdaemon5";
 
     [Solution(GenerateProjects = true)] readonly Solution Solution;
 
