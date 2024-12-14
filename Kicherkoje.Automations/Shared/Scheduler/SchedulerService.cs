@@ -73,11 +73,13 @@ public class SchedulerService(ISchedulerFactory schedulerFactory, ILogger<Schedu
         if (baseJobKeyExists && conflictBehavior is ISchedulerService.ConflictBehavior.KeepExisting)
             return;
 
-        var job = JobBuilder
+        var jobBuilder = JobBuilder
             .Create<TJob>()
-            .WithIdentity(jobKey)
-            .SetJobData(CreateJobDataMap(jopParameters))
-            .Build();
+            .WithIdentity(jobKey);
+        if (jopParameters != null)
+            jobBuilder.SetJobData(CreateJobDataMap(jopParameters));
+        var job = jobBuilder.Build();
+
         var trigger = TriggerBuilder
             .Create()
             .ForJob(job)
@@ -97,11 +99,12 @@ public class SchedulerService(ISchedulerFactory schedulerFactory, ILogger<Schedu
         if (baseJobKeyExists && conflictBehavior is ISchedulerService.ConflictBehavior.KeepExisting)
             return;
 
-        var job = JobBuilder
+        var jobBuilder = JobBuilder
             .Create<TJob>()
-            .WithIdentity(jobKey)
-            .SetJobData(CreateJobDataMap(jobParameters))
-            .Build();
+            .WithIdentity(jobKey);
+        if (jobParameters != null)
+            jobBuilder.SetJobData(CreateJobDataMap(jobParameters));
+        var job = jobBuilder.Build();
 
         var trigger = TriggerBuilder.Create()
             .ForJob(job)
