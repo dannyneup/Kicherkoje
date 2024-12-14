@@ -72,11 +72,14 @@ class Build : NukeBuild
                 .SetConfiguration(global::Configuration.Release)
                 .SetOutput(PublishDirectory)));
 
-    //todo: fix version check
     Target CheckNetDaemonVersion => d => d
         .Executes(() =>
         {
-            var appsVersion = TargetProject.GetPackageReferenceVersion("NetDaemon.Runtime");
+            var appVersion = TargetProject
+                .GetMSBuildProject()
+                .GetItems("PackageReference")
+                .SingleOrDefault(reference => reference.EvaluatedInclude == "NetDaemon.Runtime")?
+                .GetMetadataValue("Version");
             Pwsh(
                 $"""
                       -Command
@@ -88,14 +91,16 @@ class Build : NukeBuild
                 ,
                 exitHandler: p =>
                 {
-                    if (appsVersion != p.Output.First().Text)
-                        Assert.Fail("NetDaemon runtime versions do not match!");
+                    var serverVersion = p.Output.First().Text;
+                    if (appVersion != serverVersion)
+                        Assert.Fail($"Server runtime version '{serverVersion}' does not match app version '{appVersion}'!");
+                    return null;
                 }
             );
         });
 
     Target SynchronizeFiles => d => d
-        .DependsOn(Publish, Publish)
+        .DependsOn(Publish, Publish, CheckNetDaemonVersion)
         .Executes(() =>
         {
             Pwsh(
