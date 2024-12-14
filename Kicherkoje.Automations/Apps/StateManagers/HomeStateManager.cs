@@ -18,7 +18,7 @@ namespace Kicherkoje.Automations.Apps.StateManagers;
 public record HomeState(Daytime? Daytime = null, IReadOnlyList<Resident>? SleepingResidents = null);
 
 [NetDaemonApp]
-public class HomeStateManager(IHaContext haContext, ILogger logger, ISchedulerService schedulerService) : AppBase(haContext, logger, schedulerService), IStateManager<HomeState>, IAsyncInitializable
+public class HomeStateManager(IHaContext haContext, ILogger<HomeStateManager> logger, ISchedulerService schedulerService) : AppBase(haContext, logger, schedulerService), IStateManager<HomeState>, IAsyncInitializable
 {
     private readonly Subject<StateChange<HomeState>> _stateChanges = new();
     private HomeState _currentState = new();
