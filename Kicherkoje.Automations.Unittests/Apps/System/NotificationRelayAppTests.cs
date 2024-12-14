@@ -1,7 +1,7 @@
 using Kicherkoje.Automations.Apps.System;
 using Kicherkoje.Automations.Configuration.HomeAssistantGenerated;
 using Kicherkoje.Automations.Shared.Enumerations.Services;
-using Kicherkoje.Automations.Shared.Services;
+using Kicherkoje.Automations.Shared.Scheduler;
 using Kicherkoje.Automations.Unittests.TestUtilities;
 using Microsoft.Extensions.Logging;
 

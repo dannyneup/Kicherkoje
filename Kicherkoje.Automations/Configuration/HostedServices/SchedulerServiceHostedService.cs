@@ -1,6 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Kicherkoje.Automations.Shared.Services;
+using Kicherkoje.Automations.Shared.Scheduler;
 using Microsoft.Extensions.Hosting;
 
 namespace Kicherkoje.Automations.Configuration.HostedServices;

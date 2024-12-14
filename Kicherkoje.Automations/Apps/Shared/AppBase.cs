@@ -1,4 +1,4 @@
-using Kicherkoje.Automations.Shared.Services;
+using Kicherkoje.Automations.Shared.Scheduler;
 
 namespace Kicherkoje.Automations.Apps.Shared;
 

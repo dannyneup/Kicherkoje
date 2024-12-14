@@ -1,4 +1,4 @@
-using Kicherkoje.Automations.Shared.Services;
+using Kicherkoje.Automations.Shared.Scheduler;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Quartz;
@@ -36,7 +36,7 @@ public class SchedulerServiceTests
         var delay = TimeSpan.FromMinutes(1);
         _scheduler.CheckExists(Arg.Any<JobKey>()).Returns(false);
 
-        await _sut.ScheduleJobAsync<TestJob>(delay);
+        await _sut.ScheduleJobInAsync<TestJob>(delay);
 
         await _scheduler.Received(1).ScheduleJob(Arg.Any<IJobDetail>(), Arg.Any<IReadOnlyCollection<ITrigger>>(), Arg.Any<bool>());
     }
@@ -48,7 +48,7 @@ public class SchedulerServiceTests
         var delay = TimeSpan.FromMinutes(1);
         _scheduler.CheckExists(Arg.Any<JobKey>()).Returns(true);
 
-        await _sut.ScheduleJobAsync<TestJob>(delay, ISchedulerService.ConflictBehavior.KeepExisting);
+        await _sut.ScheduleJobInAsync<TestJob>(delay, ISchedulerService.ConflictBehavior.KeepExisting);
 
         await _scheduler.DidNotReceive().ScheduleJob(Arg.Any<IJobDetail>(), Arg.Any<IReadOnlyCollection<ITrigger>>(), Arg.Any<bool>());
     }
@@ -60,7 +60,7 @@ public class SchedulerServiceTests
         var delay = TimeSpan.FromMinutes(1);
         _scheduler.CheckExists(Arg.Any<JobKey>()).Returns(true);
 
-        await _sut.ScheduleJobAsync<TestJob>(delay, ISchedulerService.ConflictBehavior.OverwriteExisting);
+        await _sut.ScheduleJobInAsync<TestJob>(delay, ISchedulerService.ConflictBehavior.OverwriteExisting);
 
         await _scheduler.Received(1).ScheduleJob(Arg.Any<IJobDetail>(), Arg.Any<IReadOnlyCollection<ITrigger>>(), true);
     }
@@ -72,7 +72,7 @@ public class SchedulerServiceTests
         var delay = TimeSpan.FromMinutes(1);
         _scheduler.CheckExists(Arg.Any<JobKey>()).Returns(true, true, false);
 
-        await _sut.ScheduleJobAsync<TestJob>(delay, ISchedulerService.ConflictBehavior.CreateNew);
+        await _sut.ScheduleJobInAsync<TestJob>(delay, ISchedulerService.ConflictBehavior.CreateNew);
 
         await _scheduler.Received(1).ScheduleJob(Arg.Is<IJobDetail>(jobDetail => jobDetail.Key.Name == "TestJob_2"), Arg.Any<IReadOnlyCollection<ITrigger>>(), Arg.Any<bool>());
     }

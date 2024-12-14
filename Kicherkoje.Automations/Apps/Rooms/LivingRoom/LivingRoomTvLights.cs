@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Kicherkoje.Automations.Apps.Shared;
-using Kicherkoje.Automations.Shared.Services;
+using Kicherkoje.Automations.Shared.Scheduler;
 using NetDaemon.HassModel.Entities;
 
 namespace Kicherkoje.Automations.Apps.Rooms.LivingRoom;

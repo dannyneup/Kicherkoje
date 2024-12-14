@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Kicherkoje.Automations.Apps.Shared;
 using Kicherkoje.Automations.Shared.Enumerations.States;
 using Kicherkoje.Automations.Shared.Extensions;
-using Kicherkoje.Automations.Shared.Services;
+using Kicherkoje.Automations.Shared.Scheduler;
 using Quartz;
 
 namespace Kicherkoje.Automations.Apps.General;
@@ -50,7 +50,7 @@ public class GeneralLights : AppBase
             .StateChanges()
             .Where(s => s.New?.State == LightState.On)
             .SubscribeAsync(async _ =>
-                await SchedulerService.ScheduleJobAsync<TrunOffGrowLights>(TimeSpan.FromHours(12), ISchedulerService.ConflictBehavior.KeepExisting)
+                await SchedulerService.ScheduleJobInAsync<TrunOffGrowLights>(TimeSpan.FromHours(12), ISchedulerService.ConflictBehavior.KeepExisting)
             );
     }
 

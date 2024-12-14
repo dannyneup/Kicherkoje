@@ -1,7 +1,8 @@
 using System.Data;
 using Kicherkoje.Automations.Apps.StateManagers;
+using Kicherkoje.Automations.Apps.StateManagers.Shared;
 using Kicherkoje.Automations.Configuration.HostedServices;
-using Kicherkoje.Automations.Shared.Services;
+using Kicherkoje.Automations.Shared.Scheduler;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
@@ -13,8 +14,8 @@ namespace Kicherkoje.Automations.Configuration;
 public static class DependencyInjection
 {
     public static IServiceCollection AddStateManagers(this IServiceCollection services) =>
-        services.AddSingleton<ISleepStateManager>(sp => new SleepStateManager(sp.GetRequiredService<IHaContext>(),
-            sp.GetRequiredService<ILogger<SleepStateManager>>(), sp.GetRequiredService<ISchedulerService>()));
+        services.AddSingleton<IStateManager<HomeState>>(sp => new HomeStateManager(sp.GetRequiredService<IHaContext>(),
+            sp.GetRequiredService<ILogger<HomeStateManager>>(), sp.GetRequiredService<ISchedulerService>()));
 
     public static IServiceCollection AddScheduler(this IServiceCollection services)
     {

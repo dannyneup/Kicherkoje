@@ -2,7 +2,7 @@ using System.Reactive.Linq;
 using System.Text.Json;
 using Kicherkoje.Automations.Apps.Shared;
 using Kicherkoje.Automations.Shared.Enumerations.Types;
-using Kicherkoje.Automations.Shared.Services;
+using Kicherkoje.Automations.Shared.Scheduler;
 
 namespace Kicherkoje.Automations.Apps.System;
 

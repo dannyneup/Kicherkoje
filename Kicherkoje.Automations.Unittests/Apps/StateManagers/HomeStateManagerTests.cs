@@ -3,19 +3,19 @@ using Kicherkoje.Automations.Apps.StateManagers.Shared;
 using Kicherkoje.Automations.Configuration.HomeAssistantGenerated;
 using Kicherkoje.Automations.Shared.Enumerations;
 using Kicherkoje.Automations.Shared.Enumerations.States;
-using Kicherkoje.Automations.Shared.Services;
+using Kicherkoje.Automations.Shared.Scheduler;
 using Kicherkoje.Automations.Unittests.TestUtilities;
 using Microsoft.Extensions.Logging;
 using NetDaemon.HassModel.Entities;
 
 namespace Kicherkoje.Automations.Unittests.Apps.StateManagers;
 
-public class SleepStateManagerTests
+public class HomeStateManagerTests
 {
     private readonly HaContextMock _context;
     private readonly Entities _entities;
 
-    public SleepStateManagerTests()
+    public HomeStateManagerTests()
     {
         _context = new HaContextMock();
         _entities = new Entities(_context);
@@ -66,14 +66,14 @@ public class SleepStateManagerTests
         List<Resident> expectedSleepingResidents)
     {
         SetupContext();
-        var sut = new SleepStateManager(_context, Substitute.For<ILogger>(), Substitute.For<ISchedulerService>());
-        var action = Substitute.For<Action<StateChange<SleepState>>>();
+        var sut = new HomeStateManager(_context, Substitute.For<ILogger>(), Substitute.For<ISchedulerService>());
+        var action = Substitute.For<Action<StateChange<HomeState>>>();
         sut.StateChanges().Subscribe(action);
 
         _context.TriggerStateChange(_entities.BinarySensor.IphoneVonDannyFocus,
             residentsFocusInformation[Resident.Danny].isFocusEnabled);
 
-        action.Received(1).Invoke(Arg.Is<StateChange<SleepState>>(change =>
+        action.Received(1).Invoke(Arg.Is<StateChange<HomeState>>(change =>
             change.NewState.SleepingResidents.Count == expectedSleepingResidents.Count));
         return;
 
@@ -107,8 +107,8 @@ public class SleepStateManagerTests
     [InlineData("binary_sensor.iphone_von_liv_grete_focus")]
     public void FocusStateEntityChanged_TriggersSleepStateChange(string entityId)
     {
-        var sut = new SleepStateManager(_context, Substitute.For<ILogger>(), Substitute.For<ISchedulerService>());
-        var action = Substitute.For<Action<StateChange<SleepState>>>();
+        var sut = new HomeStateManager(_context, Substitute.For<ILogger>(), Substitute.For<ISchedulerService>());
+        var action = Substitute.For<Action<StateChange<HomeState>>>();
         sut.StateChanges().Subscribe(action);
 
         var entity = Substitute.For<IEntityCore>();
@@ -116,7 +116,7 @@ public class SleepStateManagerTests
 
         _context.TriggerStateChange(entity, "on");
 
-        action.Received(1).Invoke(Arg.Any<StateChange<SleepState>>());
+        action.Received(1).Invoke(Arg.Any<StateChange<HomeState>>());
     }
 
     [Theory]
@@ -124,8 +124,8 @@ public class SleepStateManagerTests
     [InlineData("input_select.liv_focus")]
     public void FocusModeEntityChanged_TriggersSleepStateChange(string entityId)
     {
-        var sut = new SleepStateManager(_context, Substitute.For<ILogger>(), Substitute.For<ISchedulerService>());
-        var action = Substitute.For<Action<StateChange<SleepState>>>();
+        var sut = new HomeStateManager(_context, Substitute.For<ILogger>(), Substitute.For<ISchedulerService>());
+        var action = Substitute.For<Action<StateChange<HomeState>>>();
         sut.StateChanges().Subscribe(action);
 
         var entity = Substitute.For<IEntityCore>();
@@ -133,6 +133,6 @@ public class SleepStateManagerTests
 
         _context.TriggerStateChange(entity, FocusMode.Sleep);
 
-        action.Received(1).Invoke(Arg.Any<StateChange<SleepState>>());
+        action.Received(1).Invoke(Arg.Any<StateChange<HomeState>>());
     }
 }

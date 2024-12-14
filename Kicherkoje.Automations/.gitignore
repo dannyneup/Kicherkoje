@@ -6,3 +6,4 @@ bin
 appsettings.json
 src/HomeAssistantGenerated.cs
 NetDaemonCodegen
+*.sqlite
