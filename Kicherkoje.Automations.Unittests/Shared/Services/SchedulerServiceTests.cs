@@ -30,7 +30,7 @@ public class SchedulerServiceTests
     }
 
     [Fact]
-    public async Task ScheduleJobAsync_WithDelay_KeyDoesNotExist_SchedulesJob()
+    public async Task ScheduleJobInAsync_WithDelay_KeyDoesNotExist_SchedulesJob()
     {
         await _sut.InitializeAsync();
         var delay = TimeSpan.FromMinutes(1);
@@ -42,7 +42,7 @@ public class SchedulerServiceTests
     }
 
     [Fact]
-    public async Task ScheduleJobAsync_WithDelay_KeepExistingAndKeyExists_DoesNotSchedule()
+    public async Task ScheduleJobInAsync_WithDelay_KeepExistingAndKeyExists_DoesNotSchedule()
     {
         await _sut.InitializeAsync();
         var delay = TimeSpan.FromMinutes(1);
@@ -54,7 +54,7 @@ public class SchedulerServiceTests
     }
 
     [Fact]
-    public async Task ScheduleJobAsync_WithDelay_OverrideExistingAndKeyExists_SchedulesJobWithReplace()
+    public async Task ScheduleJobInAsync_WithDelay_OverrideExistingAndKeyExists_SchedulesJobWithReplace()
     {
         await _sut.InitializeAsync();
         var delay = TimeSpan.FromMinutes(1);
@@ -66,7 +66,7 @@ public class SchedulerServiceTests
     }
 
     [Fact]
-    public async Task ScheduleJobAsync_WithDelay_CreateNewAndKeyExists_SchedulesJobWithCorrectPostfix()
+    public async Task ScheduleJobInAsync_WithDelay_CreateNewAndKeyExists_SchedulesJobWithCorrectPostfix()
     {
         await _sut.InitializeAsync();
         var delay = TimeSpan.FromMinutes(1);
