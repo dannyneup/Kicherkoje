@@ -61,12 +61,14 @@ public class HomeStateManagerTests
 
     [Theory]
     [MemberData(nameof(TestData))]
-    public void FocusEntityChanged_UpdatesSleepStateCorrectly(
+    public async Task FocusEntityChanged_UpdatesSleepStateCorrectly(
         Dictionary<Resident, (string isFocusEnabled, string activeFocusMode)> residentsFocusInformation,
         List<Resident> expectedSleepingResidents)
     {
         SetupContext();
         var sut = new HomeStateManager(_context, Substitute.For<ILogger>(), Substitute.For<ISchedulerService>());
+        await sut.InitializeAsync(CancellationToken.None);
+
         var action = Substitute.For<Action<StateChange<HomeState>>>();
         sut.StateChanges().Subscribe(action);
 
@@ -105,9 +107,11 @@ public class HomeStateManagerTests
     [Theory]
     [InlineData("binary_sensor.iphone_von_danny_focus")]
     [InlineData("binary_sensor.iphone_von_liv_grete_focus")]
-    public void FocusStateEntityChanged_TriggersSleepStateChange(string entityId)
+    public async Task FocusStateEntityChanged_TriggersSleepStateChange(string entityId)
     {
         var sut = new HomeStateManager(_context, Substitute.For<ILogger>(), Substitute.For<ISchedulerService>());
+        await sut.InitializeAsync(CancellationToken.None);
+
         var action = Substitute.For<Action<StateChange<HomeState>>>();
         sut.StateChanges().Subscribe(action);
 
@@ -122,9 +126,11 @@ public class HomeStateManagerTests
     [Theory]
     [InlineData("input_select.danny_focus")]
     [InlineData("input_select.liv_focus")]
-    public void FocusModeEntityChanged_TriggersSleepStateChange(string entityId)
+    public async Task FocusModeEntityChanged_TriggersSleepStateChange(string entityId)
     {
         var sut = new HomeStateManager(_context, Substitute.For<ILogger>(), Substitute.For<ISchedulerService>());
+        await sut.InitializeAsync(CancellationToken.None);
+
         var action = Substitute.For<Action<StateChange<HomeState>>>();
         sut.StateChanges().Subscribe(action);
 
