@@ -3,16 +3,18 @@
   "isRoot": true,
   "tools": {
     "nuke.globaltool": {
-      "version": "8.0.0",
+      "version": "9.0.3",
       "commands": [
         "nuke"
-      ]
+      ],
+      "rollForward": false
     },
     "netdaemon.hassmodel.codegen": {
-      "version": "24.16.0",
+      "version": "24.50.0",
       "commands": [
         "nd-codegen"
-      ]
+      ],
+      "rollForward": false
     }
   }
 }
